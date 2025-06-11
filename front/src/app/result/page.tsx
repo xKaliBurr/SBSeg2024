@@ -1,37 +1,64 @@
-'use client';
-import { useState, useEffect } from "react";
-import { IoInformationCircleOutline } from "react-icons/io5";
-import Image from "next/image";
+'use client'
+import { useState, useEffect } from "react"
+import { IoInformationCircleOutline } from "react-icons/io5"
+import Image from "next/image"
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import Loading from "../components/loading";
-import SectionButton from "../components/sectionButton";
-import { RunAllScan } from "@/api/run_all_scan";
-import IpSection from "../components/ipSection";
-import SectionInfo from "../components/sectionInfo";
-import Hint from "../components/hint";
-import ReportButton from "../components/reportButton";
+import SectionButton from "@/app/components/sectionButton"
+import { RunAllScan } from "@/api/run_all_scan"
+import IpSection from "@/app/components/ipSection"
+import { ScanSection } from "@/app/components/scanSection"
+import Hint from "@/app/components/hint"
+import ReportButton from "@/app/components/reportButton"
+import type { ScansAvailable, ScanState } from "@/types/scan"
 
-export enum Sections {
-    GeneralInfo = "INFORMAÇÕES GERAIS",
-    Directories = "DIRETÓRIOS E PÁGINAS SENSÍVEIS",
-    Services = "SERVIÇOS E PORTAS DE REDE",
-    Neighbors = "DOMÍNIOS VIZINHOS"
+type Sections = "GeneralInfo" | "Directories" | "Services" | "Neighbors"
+export type Section = {
+    name: Sections
+    title: string,
+    scans: ScansAvailable[]
+}
+export const sections: Record<Sections, Section> = {
+    GeneralInfo: {
+        name: "GeneralInfo",
+        title: "INFORMAÇÕES GERAIS",
+        scans: ["whoIs", "banner"],
+    },
+    Directories: {
+        name: "Directories",
+        title: "DIRETÓRIOS E PÁGINAS SENSÍVEIS",
+        scans: ["directoryScan"],
+    },
+    Services: {
+        name: "Services",
+        title: "SERVIÇOS E PORTAS DE REDE",
+        scans: ["ports"],
+    },
+    Neighbors: {
+        name: "Neighbors",
+        title: "DOMÍNIOS VIZINHOS",
+        scans: ["reverseDNS", "subDNS"],
+    },
+}
+
+const defaultModuleState = {
+    isLoading: true,
+    result: "",
 }
 
 export default function ResultPage(){
-    const searchParams = useSearchParams();
-    const [section, setSection] = useState(Sections.GeneralInfo)
-    const [isLoading, setIsLoading] = useState(true)
+    const searchParams = useSearchParams()
+    const [section, setSection] = useState(sections.GeneralInfo)
+    const [isLoading, setIsLoading] = useState(false)
     const [ip, setIp] = useState("")
-    const [data, setData] = useState({
-        whatweb: "",
-        reverseDNS: "",
-        subDNS: "",
-        whoIs: "",
-        banner: "",
-        directoryScan: "",
-        ports: ""
+    const [results, setResults] = useState<Record<ScansAvailable, ScanState>>({
+        whatweb: { name: "whatweb", ...defaultModuleState},
+        reverseDNS: { name: "reverseDNS", ...defaultModuleState},
+        subDNS: { name: "subDNS", ...defaultModuleState},
+        whoIs: { name: "whoIs", ...defaultModuleState},
+        banner: { name: "banner", ...defaultModuleState},
+        directoryScan: { name: "directoryScan", ...defaultModuleState},
+        ports: { name: "ports", ...defaultModuleState},
     })
 
     const optionSelected = searchParams.get('option') as 'http' | 'https'
@@ -40,37 +67,28 @@ export default function ResultPage(){
     useEffect(() => {
         const fetchData = async () => {
             const {promises, ip} = await RunAllScan(searchValue!, optionSelected)
-            if(promises) {
-                setData({
-                    whatweb: await promises.whatweb.then(response => response.text()),
-                    reverseDNS: await promises.reverseDNS.then(response => response.text()),
-                    subDNS: await promises.subDNS.then(response => response.text()),
-                    whoIs: await promises.whoIs.then(response => response.text()),
-                    banner: await promises.banner.then(response => response.text()),
-                    directoryScan: await promises.directoryScan.then(response => response.text()),
-                    ports: await promises.ports.then(response => response.text())
-                })
+            if (promises) {
                 setIp(ip)
-                setIsLoading(false)
+                for (const key in promises) {
+                    promises[key as ScansAvailable]
+                        .then(async response => {
+                            const responseText = response.ok ? await response.text() : "Falha ao executar esse módulo"
+                            setResults((prev) => ({
+                                ...prev,
+                                [key]: {
+                                    name: key,
+                                    isLoading: false,
+                                    result: responseText,
+                                }
+                            }))
+                        })
+                }
             }
         }
 
         fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
-
-    const infoText = () => {
-        if(section == Sections.GeneralInfo){return data.whoIs}
-        if(section == Sections.Directories){return data.directoryScan}
-        if(section == Sections.Services){return data.ports}
-        if(section == Sections.Neighbors){return data.reverseDNS}
-    }
-
-    function btnClick(value: Sections){
-        setSection(value)
-    }
-
-    if (isLoading) return <Loading domainName={searchValue!}/>
 
     return (
         <>
@@ -93,22 +111,34 @@ export default function ResultPage(){
                         <div className="text-gray-400 bg-slate-700 w-full">{searchValue}</div>
                     </div>
                 </div>
-                <ReportButton search={searchValue!} ip={ip} results={data} />
+                <ReportButton search={searchValue!} ip={ip} results={results} />
             </header>
             <div className="flex flex-col w-full h-full mt-10 gap-6">
                 <div className="flex flex-row gap-4 overflow-x-auto">
-                    <SectionButton flag={section} onClick={() => btnClick(Sections.GeneralInfo)} sectionType={Sections.GeneralInfo}/>
-                    <SectionButton flag={section} onClick={() => btnClick(Sections.Directories)} sectionType={Sections.Directories}/>
-                    <SectionButton flag={section} onClick={() => btnClick(Sections.Services)} sectionType={Sections.Services}/>
-                    <SectionButton flag={section} onClick={() => btnClick(Sections.Neighbors)} sectionType={Sections.Neighbors}/>
+                    {Object.values(sections).map((value) => (
+                        <SectionButton
+                            key={value.name}
+                            section={value}
+                            onSelect={setSection}
+                            isCurrent={section.title == value.title}
+                        />
+                    ))}
                 </div>
-                <Hint sectionType={section}/>
+                <Hint section={section}/>
                 <div className="flex flex-row justify-between">
                     <div className="bg-slate-900 divide-y divide-blue-500 p-10 rounded-md w-full">
-                        <IpSection alias={searchValue!} ip={ip} info={data.whatweb} sectionType={section}/>
-                        <SectionInfo sectionType={section} info={infoText()!}/>
-                        {section == Sections.GeneralInfo ? <SectionInfo sectionType={section} info={data.banner} extra={true}/> : <></>}
-                        {section == Sections.Neighbors ? <SectionInfo sectionType={section} info={data.subDNS} extra={true}/> : <></>}
+                        <IpSection
+                            search={searchValue!}
+                            ip={ip}
+                            whatweb_result={results.whatweb.result}
+                            render_whatweb={section.name === "GeneralInfo"}
+                        />
+                        {sections[section.name].scans.map((scan) => (
+                            <ScanSection
+                                key={scan}
+                                scan={results[scan]}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>

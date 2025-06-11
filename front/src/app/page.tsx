@@ -4,7 +4,7 @@ import { IoMdSearch } from "react-icons/io"
 import { useRouter } from 'next/navigation'
 import { MdArrowDropDown, MdArrowDropUp } from "react-icons/md"
 import { useState } from "react"
-import CustomButton from "@/app/components/customButton"
+import { CustomButton } from "@/app/components/customButton"
 
 export default function HomePage(){
     const router = useRouter()

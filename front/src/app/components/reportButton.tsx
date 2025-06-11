@@ -1,5 +1,6 @@
+import { CustomButton } from "./customButton"
 import { MdOutlineFileDownload } from "react-icons/md"
-import CustomButton from "./customButton"
+import type { ScansAvailable, ScanState } from "@/types/scan"
 
 const header =
 ` __          __  _            _  __     _ _ _                            ___    ___
@@ -12,18 +13,10 @@ const header =
 By round table team
 `
 
-interface ReportButtonProps {
+type ReportButtonProps = {
     search: string
     ip: string
-    results: {
-        whatweb: string
-        reverseDNS: string
-        subDNS: string
-        whoIs: string
-        banner: string
-        directoryScan: string
-        ports: string
-    }
+    results: Record<ScansAvailable, ScanState>
 }
 
 
@@ -38,49 +31,53 @@ Alias usado: ${search}
 Endereço IP Descoberto: ${ip}
 
 Outras Informações Relacionadas aos Endereçamentos IP do Alvo:
-${results.whatweb}
+${results.whatweb.result}
 
 ############################################
 ###      Scanner de Portas de Redes      ###
 ############################################
 
-${results.ports}
+${results.ports.result}
 
 ###################################
 ###   Varredura de Diretórios   ###
 ###################################
 
-${results.directoryScan}
+${results.directoryScan.result}
 
 ############################################
 ###     Informações Gerais do Domínio    ###
 ############################################
 
-${results.whoIs}
+${results.whoIs.result}
 
 #####################################################
 ###    Banner da Página HTML Inicial do Alvo      ###
 #####################################################
 
-${results.banner}
+${results.banner.result}
 
 ####################################
 ###     DNS Reverso do Domínio   ###
 ####################################
 
-${results.reverseDNS}
+${results.reverseDNS.result}
 
 ############################################
 ###    Sub-DNS & Sistemas Integrados     ###
 ############################################
 
-${results.subDNS}
+${results.subDNS.result}
 
 Exploração Realizada em: ${new Date().toLocaleString()}
 `
     }
 
+    const isAllResultsLoaded = Object.values(results).every((result) => result.isLoading === false)
+
     function generateReport() {
+        if (!isAllResultsLoaded) return
+
         const body = getReportBody()
         const file = new Blob([body], {type: 'text/plain'})
         const url = URL.createObjectURL(file)
@@ -95,7 +92,7 @@ Exploração Realizada em: ${new Date().toLocaleString()}
     }
 
     return (
-        <CustomButton onClick={generateReport}>
+        <CustomButton onClick={generateReport} disabled={!isAllResultsLoaded}>
             <p>DOWNLOAD DA ANÁLISE</p>
             <MdOutlineFileDownload className="ml-3" size={25}/>
         </CustomButton>

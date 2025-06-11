@@ -1,4 +1,5 @@
 import { getBanner, getDirectoryScan, getIP, getPorts, getReverseDNS, getSubDNS, getWhatweb, getWhoIs } from "./scan"
+import type { ScansAvailable } from "@/types/scan"
 
 export async function RunAllScan(input: string, protocol: 'http' | 'https') {
     input = input.replace(/^https?:\/\//, '')
@@ -7,12 +8,12 @@ export async function RunAllScan(input: string, protocol: 'http' | 'https') {
     const domainIsIp = isIP(domain)
 
     const ip = domainIsIp
-        ? domain :
-        await getIP(domain)
+        ? domain
+        : await getIP(domain)
             .then(response => response.text())
             .then(text => text.split(' ').at(-1)!)
 
-    const promises = {
+    const promises: Record<ScansAvailable, Promise<Response>> = {
         whatweb: getWhatweb(url.href),
         reverseDNS: getReverseDNS(ip),
         subDNS: getSubDNS(domain),
