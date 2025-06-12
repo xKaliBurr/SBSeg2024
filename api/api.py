@@ -1,5 +1,7 @@
 import re
 from flask_cors import CORS
+from os import environ as env
+from dotenv import load_dotenv
 from flask import Flask, request
 from subprocess import getoutput, run
 
@@ -96,5 +98,6 @@ def get_port_scan():
 
 
 if __name__ == '__main__':
+    load_dotenv()
     CORS(app, origins='*')
-    app.run(debug=True, port=5001, host='0.0.0.0')
+    app.run(debug=True, port=env.get('API_PORT', 5001), host=env.get('API_HOST', 'localhost'))

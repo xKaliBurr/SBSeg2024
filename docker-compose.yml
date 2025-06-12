@@ -1,7 +1,9 @@
-version: '3'
 services:
   api:
     image: exekaliburr-api
+    container_name: exekaliburr-api
+    env_file:
+      - ./api/.env
     build:
       context: api
       dockerfile: Dockerfile
@@ -9,12 +11,17 @@ services:
     security_opt:
       - no-new-privileges:true
     privileged: true
+    volumes:
+      - ./api/.env:/exekaliburr/api/.env
   front:
     image: exekaliburr-front
+    container_name: exekaliburr-front
+    env_file:
+      - ./front/.env
     build:
       context: front
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "${FRONT_PORT}:3000"
     security_opt:
       - no-new-privileges:true

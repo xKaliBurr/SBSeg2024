@@ -1,6 +1,6 @@
 FROM kalilinux/kali-rolling
 
-WORKDIR /exekaliburr
+WORKDIR /exekaliburr/api
 
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1

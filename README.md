@@ -40,9 +40,13 @@ Por fim, também configuramos imagens Docker para facilitar a execução da ferr
 
 ## Executando a ferramenta
 
-Para executar a ferramenta, você precisa ter o docker e o docker-compose instalados em sua máquina. Além disso, caso queria rodar no windows é necessário ativar a feature "host networking" que está em beta.
+Para executar a ferramenta, você precisa ter o Docker e o Docker Compose instalados em sua máquina. Além disso, caso queria rodar no windows é necessário ativar a feature "host networking" que está em beta.
 
-Antes de executar a ferramenta, você deve criar um arquivo `.env.local` na pasta `./front/`, pode criá-lo apenas como uma cópia do arquivo `.env.template` que já está pronto pra rodar a ferramenta localmente.
+Se você estiver no linux pode usar o nosso script de setup `./setup.sh` para facilitar sua instalação. Caso vá rodar localmente (recomendado) não precisa alterar nenhuma variável de ambiente padrão.
+(Script testado no Ubuntu 22.04)
+
+Para fazer o setup manualmente, antes de executar a ferramenta você deve criar um arquivo `.env` nas pastas `./front/` e `./api/`, pode criá-lo apenas como uma cópia dos arquivos `.env.template` que já está configurado para rodar a ferramenta localmente.
+<br> Além disso, com as variáveis devidamente configuradas você precisa ainda criar um outro arquivo `.env` na raiz do projeto com a porta da interface web configurada. Para simplificar, você pode apenas copiar o arquivo `./front/.env` na pasta raiz.
 
 Por fim, para executar a ferramenta basta rodar o comando:
 
