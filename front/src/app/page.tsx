@@ -67,9 +67,10 @@ export default function HomePage(){
                     >
                     </input>
                 </div>
-                <CustomButton type="submit">
-                    REALIZAR ANÁLISE
-                </CustomButton>
+                <CustomButton
+                    type="submit"
+                    text="REALIZAR ANÁLISE"
+                />
             </form>
         </div>
     )

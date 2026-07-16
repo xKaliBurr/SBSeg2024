@@ -1,14 +1,16 @@
+import { ScanState } from "@/types/scan"
 import { MdTravelExplore } from "react-icons/md"
+import { Spinner } from "./spinner"
 
 
 interface IIpSectionProps{
     search: string
     ip: string
-    whatweb_result: string
+    whatweb_scan: ScanState
     render_whatweb?: boolean
 }
 
-export default function IpSection({ search, ip, whatweb_result, render_whatweb }: IIpSectionProps) {
+export default function IpSection({ search, ip, whatweb_scan, render_whatweb }: IIpSectionProps) {
     const title = "Identificação de Endereço IP"
     const subTitle = "OUTRAS INFORMAÇÕES RELACIONADAS AOS ENDEREÇAMENTOS IP DO ALVO:"
 
@@ -24,10 +26,12 @@ export default function IpSection({ search, ip, whatweb_result, render_whatweb }
             </div>
 
             {render_whatweb && (
-                <>
-                    <p className="text-white mb-3">{subTitle}</p>
-                    <pre className="text-white overflow-x-auto">{whatweb_result}</pre>
-                </>
+                whatweb_scan.isLoading ? <Spinner /> : (
+                    <>
+                        <p className="text-white mb-3">{subTitle}</p>
+                        <pre className="text-white overflow-x-auto">{whatweb_scan.result}</pre>
+                    </>
+                )
             )}
             </section>
     )

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react"
 import { IoInformationCircleOutline } from "react-icons/io5"
 import Image from "next/image"
-import { useSearchParams } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import SectionButton from "@/app/components/sectionButton"
 import { RunAllScan } from "@/api/run_all_scan"
@@ -11,6 +11,10 @@ import { ScanSection } from "@/app/components/scanSection"
 import Hint from "@/app/components/hint"
 import ReportButton from "@/app/components/reportButton"
 import type { ScansAvailable, ScanState } from "@/types/scan"
+import { CustomButton } from "../components/customButton"
+import { MdOutlineConstruction, MdOutlinePsychology, MdPsychology, MdSearch } from "react-icons/md"
+import { GradientSearchIcon } from "../components/icons/gradient-search"
+import { Modal } from "../components/modal"
 
 type Sections = "GeneralInfo" | "Directories" | "Services" | "Neighbors"
 export type Section = {
@@ -48,8 +52,10 @@ const defaultModuleState = {
 
 export default function ResultPage(){
     const searchParams = useSearchParams()
+    const router = useRouter()
+
+    const [isModalOpen, setIsModalOpen] = useState(false)
     const [section, setSection] = useState(sections.GeneralInfo)
-    const [isLoading, setIsLoading] = useState(false)
     const [ip, setIp] = useState("")
     const [results, setResults] = useState<Record<ScansAvailable, ScanState>>({
         whatweb: { name: "whatweb", ...defaultModuleState},
@@ -62,7 +68,12 @@ export default function ResultPage(){
     })
 
     const optionSelected = searchParams.get('option') as 'http' | 'https'
-    const searchValue = searchParams.get('search')?.toLocaleLowerCase()
+    const searchValue = searchParams.get('search')?.toLocaleLowerCase() ?? ""
+    const isAllResultsLoaded = Object.values(results).every((result) => result.isLoading === false)
+
+    function handleXkalibrain() {
+        setIsModalOpen(true)
+    }
 
     useEffect(() => {
         const fetchData = async () => {
@@ -111,7 +122,21 @@ export default function ResultPage(){
                         <div className="text-gray-400 bg-slate-700 w-full">{searchValue}</div>
                     </div>
                 </div>
-                <ReportButton search={searchValue!} ip={ip} results={results} />
+                <CustomButton
+                    variant="inverse"
+                    text="NOVA CONSULTA"
+                    className="[&:disabled_path]:fill-slate-400"
+                    icon={<GradientSearchIcon />}
+                    disabled={!isAllResultsLoaded}
+                    onClick={() => router.push("/")}
+                />
+                <CustomButton
+                    text="XKALIBRAIN"
+                    icon={<MdOutlinePsychology size={25} className="scale-x-[-1]" />}
+                    // disabled={!isAllResultsLoaded}
+                    onClick={handleXkalibrain}
+                />
+                <ReportButton search={searchValue} ip={ip} results={results} />
             </header>
             <div className="flex flex-col w-full h-full mt-10 gap-6">
                 <div className="flex flex-row gap-4 overflow-x-auto">
@@ -128,9 +153,9 @@ export default function ResultPage(){
                 <div className="flex flex-row justify-between">
                     <div className="bg-slate-900 divide-y divide-blue-500 p-10 rounded-md w-full">
                         <IpSection
-                            search={searchValue!}
+                            search={searchValue}
                             ip={ip}
-                            whatweb_result={results.whatweb.result}
+                            whatweb_scan={results.whatweb}
                             render_whatweb={section.name === "GeneralInfo"}
                         />
                         {sections[section.name].scans.map((scan) => (
@@ -142,6 +167,14 @@ export default function ResultPage(){
                     </div>
                 </div>
             </div>
+
+            <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+            >
+                <MdOutlineConstruction size={64} className="self-center" />
+                <span>Esta funcionalidade está em desenvolvimento e será integrada em breve.</span>
+            </Modal>
         </>
     )
 }

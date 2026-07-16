@@ -1,12 +1,41 @@
-import { ButtonHTMLAttributes } from "react"
+import { ButtonHTMLAttributes, ReactNode } from "react"
 
-type CustomButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-    isLoading?: boolean
+type ButtonVariant = "default" | "inverse"
+
+type ButtonVariantProps = {
+    classes: string
 }
 
-export function CustomButton({ children, className, isLoading, ...props }: CustomButtonProps) {
-    const classes = "text-white bg-gradient-to-r from-cyan-500 to-purple-700 items-center w-fit p-3"
-        + " rounded-md flex flex-row disabled:bg-slate-700 disabled:bg-none disabled:text-slate-400"
+type CustomButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
+    text: string,
+    icon?: ReactNode,
+    isLoading?: boolean
+    variant?: ButtonVariant
+}
+
+export function CustomButton({
+    text,
+    icon,
+    variant = "default",
+    className,
+    isLoading,
+    children,
+    ...props
+}: CustomButtonProps) {
+    const variantsProps: Record<ButtonVariant, ButtonVariantProps> = {
+        default: {
+            classes: "bg-gradient-to-r from-cyan-500 to-purple-700 text-white"
+        },
+        inverse: {
+            classes: (
+                "bg-gradient-to-r from-cyan-500 to-purple-700 text-transparent bg-clip-border-area border border-1 border-transparent"
+                + " [&>span]:bg-gradient-to-r [&>span]:from-cyan-500 [&>span]:to-purple-700 [&>span]:bg-clip-text"
+            )
+        }
+    }
+
+    const classes = "items-center w-fit p-3 rounded-md flex gap-2 disabled:bg-slate-700 disabled:bg-none disabled:text-slate-400"
+        + ` ${variantsProps[variant].classes}`
         + ` ${className}`
 
     return (
@@ -15,7 +44,8 @@ export function CustomButton({ children, className, isLoading, ...props }: Custo
             type="button"
             {...props}
         >
-            {children}
+            <span>{text}</span>
+            {icon}
         </button>
     );
 }

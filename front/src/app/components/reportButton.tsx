@@ -92,9 +92,11 @@ Exploração Realizada em: ${new Date().toLocaleString()}
     }
 
     return (
-        <CustomButton onClick={generateReport} disabled={!isAllResultsLoaded}>
-            <p>DOWNLOAD DA ANÁLISE</p>
-            <MdOutlineFileDownload className="ml-3" size={25}/>
-        </CustomButton>
+        <CustomButton
+            onClick={generateReport}
+            disabled={!isAllResultsLoaded}
+            text="DOWNLOAD DA ANÁLISE"
+            icon={<MdOutlineFileDownload size={25} />}
+        />
     )
 }

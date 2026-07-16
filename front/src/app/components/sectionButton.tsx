@@ -9,7 +9,10 @@ type SectionButtonProps = {
 export default function SectionButton({ section, onSelect, isCurrent }: SectionButtonProps){
     return (
         <button
-            className={`p-5 text-white rounded-md border border-blue-500 grow ${isCurrent ? "bg-blue-500" : "bg-slate-700"}`}
+            className={
+                "p-5 text-white rounded-md border border-blue-kali grow"
+                + (isCurrent ? " bg-blue-kali" : " bg-slate-kali")
+            }
             onClick={() => onSelect(section)}
         >
             {section.title}
