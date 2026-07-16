@@ -100,4 +100,4 @@ def get_port_scan():
 if __name__ == '__main__':
     load_dotenv()
     CORS(app, origins='*')
-    app.run(debug=True, port=env.get('API_PORT', 5001), host=env.get('API_HOST', 'localhost'))
+    app.run(debug=True, port=env.get('API_PORT', 5001), host=env.get('API_HOST', '0.0.0.0'))
