@@ -46,10 +46,10 @@ export default function Hint({ section }: HintProps) {
     const props = sectionsProps[section.name]
 
     return (
-        <section className="flex flex-col w-full border border-white bg-gradient-to-r from-cyan-500 to-purple-700 rounded-md text-white p-5">
-            <div className="flex flex-row justify-center">
+        <section className="flex flex-col w-64 h-fit shrink-0 sticky text-xs top-4 border border-white bg-gradient-to-r from-cyan-500 to-purple-700 rounded-md text-white p-5">
+            <div className="flex flex-row justify-start">
                 <MdLightbulb className="text-yellow-500 mr-1" size={25}/>
-                <h2>{"DICAS DE SEGURANÇA"}</h2>
+                <h2 className="text-base">{"DICAS DE SEGURANÇA"}</h2>
             </div>
             <p className="py-3 text-white">{props.title}</p>
             {props.hints.length > 0 && (

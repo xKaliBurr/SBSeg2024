@@ -81,7 +81,7 @@ def get_directory_scan():
     if domain is None:
         return 'Please provide a domain', 400
 
-    directory_scan = getoutput(f'gobuster dir -u {domain} -w directory-list-2.3-medium.txt -b 301,302,303,403,404 --no-color --no-progress')
+    directory_scan = getoutput(f'gobuster dir -u {domain} -w directory-list-2.3-medium.txt --delay 200ms -b 403,404 --no-color --no-progress')
     directory_scan = directory_scan.replace('\n\n', '\n')
     directory_scan = re.sub(r'\n.\[2K', '\n', directory_scan)
     return directory_scan, 200
@@ -93,7 +93,7 @@ def get_port_scan():
     if ip is None:
         return 'Please provide a ip', 400
 
-    port_scan = getoutput(f'nmap -sS -sV {ip} | grep open')
+    port_scan = getoutput(f'nmap -sS -O -sV --top-ports 1000 --max-rate 100 {ip}')
     return port_scan, 200
 
 

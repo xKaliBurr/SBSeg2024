@@ -27,8 +27,6 @@ export function Modal({ isOpen, children, onClose }: ModalProps) {
         };
     }, [isOpen, onClose]);
 
-    console.log({isOpen})
-
     if (!isOpen) {
         return (
             <></>

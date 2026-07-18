@@ -133,10 +133,9 @@ export default function ResultPage(){
                 <CustomButton
                     text="XKALIBRAIN"
                     icon={<MdOutlinePsychology size={25} className="scale-x-[-1]" />}
-                    // disabled={!isAllResultsLoaded}
+                    disabled={!isAllResultsLoaded}
                     onClick={handleXkalibrain}
                 />
-                <ReportButton search={searchValue} ip={ip} results={results} />
             </header>
             <div className="flex flex-col w-full h-full mt-10 gap-6">
                 <div className="flex flex-row gap-4 overflow-x-auto">
@@ -149,15 +148,17 @@ export default function ResultPage(){
                         />
                     ))}
                 </div>
-                <Hint section={section}/>
-                <div className="flex flex-row justify-between">
-                    <div className="bg-slate-900 divide-y divide-blue-500 p-10 rounded-md w-full">
-                        <IpSection
-                            search={searchValue}
-                            ip={ip}
-                            whatweb_scan={results.whatweb}
-                            render_whatweb={section.name === "GeneralInfo"}
-                        />
+                <div className="flex gap-4 w-full">
+                    <div className="bg-slate-900 divide-y divide-blue-500 p-10 rounded-md grow min-w-0">
+                        <div className="flex flex-col gap-6">
+                            <ReportButton search={searchValue} ip={ip} results={results} />
+                            <IpSection
+                                search={searchValue}
+                                ip={ip}
+                                whatweb_scan={results.whatweb}
+                                render_whatweb={section.name === "GeneralInfo"}
+                            />
+                        </div>
                         {sections[section.name].scans.map((scan) => (
                             <ScanSection
                                 key={scan}
@@ -165,6 +166,7 @@ export default function ResultPage(){
                             />
                         ))}
                     </div>
+                    <Hint section={section} />
                 </div>
             </div>
 

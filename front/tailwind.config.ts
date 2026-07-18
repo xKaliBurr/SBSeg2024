@@ -15,7 +15,9 @@ const config: Config = {
       },
       colors: {
         "blue-kali": "rgba(37, 112, 223, 1)",
-        "slate-kali": "rgba(53, 56, 67, 1)"
+        "blue-gradient": "rgba(39, 127, 255, 1)",
+        "purple-gradient": "rgba(150, 42, 195, 1)",
+        "slate-kali": "rgba(53, 56, 67, 1)",
       }
     },
   },

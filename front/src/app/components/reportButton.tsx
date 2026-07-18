@@ -95,8 +95,9 @@ Exploração Realizada em: ${new Date().toLocaleString()}
         <CustomButton
             onClick={generateReport}
             disabled={!isAllResultsLoaded}
-            text="DOWNLOAD DA ANÁLISE"
+            text="CLIQUE AQUI PARA FAZER O DOWNLOAD"
             icon={<MdOutlineFileDownload size={25} />}
+            className="[&]:h-8"
         />
     )
 }

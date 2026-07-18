@@ -24,12 +24,12 @@ export function CustomButton({
 }: CustomButtonProps) {
     const variantsProps: Record<ButtonVariant, ButtonVariantProps> = {
         default: {
-            classes: "bg-gradient-to-r from-cyan-500 to-purple-700 text-white"
+            classes: "bg-gradient-to-r from-blue-gradient to-purple-gradient text-white"
         },
         inverse: {
             classes: (
-                "bg-gradient-to-r from-cyan-500 to-purple-700 text-transparent bg-clip-border-area border border-1 border-transparent"
-                + " [&>span]:bg-gradient-to-r [&>span]:from-cyan-500 [&>span]:to-purple-700 [&>span]:bg-clip-text"
+                "bg-gradient-to-r from-blue-gradient to-purple-gradient text-transparent bg-clip-border-area border border-1 border-transparent"
+                + " [&>span]:bg-gradient-to-r [&>span]:from-blue-gradient [&>span]:to-purple-gradient [&>span]:bg-clip-text"
             )
         }
     }
